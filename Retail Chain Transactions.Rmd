@@ -38,23 +38,129 @@ library(ROCR)
 options(scipen = 999)
 ```
 
-
+## Importing data
 ```{r}
 stores<-read_xlsx("RetailChain.xlsx",sheet = "stores")
 products<-read_xlsx("RetailChain.xlsx",sheet = "products")
 transactions<-read_xlsx("RetailChain.xlsx",sheet = "transactions")
 ```
 
+## Joining product data and store data with transactions
 ```{r}
 df<-merge(transactions, products, by = 'UPC')
 ```
 
 ```{r}
+stores<-stores %>% 
+  rename(
+    STORE_NUM = STORE_ID
+    )
+
+df<-merge(df, stores, by = 'STORE_NUM')
+```
+
+## Dropping Oral Hygiene products from the analysis
+```{r}
 df<-subset(df, CATEGORY!='ORAL HYGIENE PRODUCTS')
 ```
 
+## Extracting Month and Year from date
 ```{r}
 str(df$WEEK_END_DATE)
+```
+
+```{r}
+df$month<-months(df$WEEK_END_DATE)
+df$year<-year(df$WEEK_END_DATE)
+```
+
+## Extracting week of the month
+```{r}
+x <- ymd(df$WEEK_END_DATE)
+
+df$week<-week(x) - week(floor_date(x, unit = "months")) + 1
+```
+
+```{r}
+glimpse(df)
+colSums(is.na(df))
+df$PARKING<-NULL
+df<-na.omit(df)
+```
+## Developing a model for Sales (Spend)
+
+### Let us visualize the spend data
+```{r}
+df2<-aggregate(df$SPEND, by=list(Category=df$WEEK_END_DATE), FUN=sum)
+```
+
+```{r}
+ggplot(df2, aes(x=Category, y=x)) +
+  geom_line(color="RED3") + ylab("SPEND")
+  xlab("")
+```
+
+```{r}
+ggplot(df, aes(x=df$SPEND)) + geom_density(color="coral",fill="coral")+ggtitle("Histogram of Spend")+xlab("Spend")
+
+ggplot(df, aes(x=log(df$SPEND))) + geom_density(color="coral",fill="coral")+ggtitle("Histogram of Log Spend")+xlab("Log of Spend")
+
+df %>%
+  group_by(week) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(week),y=log(SPEND),fill="coral"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+df %>%
+  group_by(month) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(month),y=log(SPEND),fill="coral"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+df %>%
+  group_by(year) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(year),y=log(SPEND),fill="coral"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+df %>%
+  group_by(STATE) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(STATE),y=log(SPEND),fill="coral"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+df %>%
+  group_by(SEGMENT) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(SEGMENT),y=log(SPEND),fill="coral"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+df %>%
+  group_by(MANUFACTURER) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(MANUFACTURER),y=log(SPEND),fill="coral"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+
+df %>%
+  group_by(FEATURE) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(FEATURE),y=log(SPEND),fill="coral"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+df %>%
+  group_by(DISPLAY) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(DISPLAY),y=log(SPEND),fill="coral"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+df %>%
+  group_by(TPR_ONLY) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(TPR_ONLY),y=log(SPEND),fill="coral"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+
 ```
 
 ```{r}
@@ -62,34 +168,68 @@ df2<-aggregate(df$UNITS, by=list(Category=df$WEEK_END_DATE), FUN=sum)
 ```
 
 ```{r}
-p <- ggplot(df2, aes(x=Category, y=x)) +
+ggplot(df2, aes(x=Category, y=x)) +
+  geom_line(color="RED3") + ylab("Units")
+  xlab("")
+```
+```{r}
+df2<-aggregate(df$HHS, by=list(Category=df$WEEK_END_DATE), FUN=sum)
+```
+
+```{r}
+ggplot(df2, aes(x=Category, y=x)) +
+  geom_line(color="RED3") + ylab("HHS")
+  xlab("")
+```
+```{r}
+df2<-aggregate(df$PRICE, by=list(Category=df$WEEK_END_DATE), FUN=sum)
+```
+
+```{r}
+ggplot(df2, aes(x=Category, y=x)) +
   geom_line(color="RED3") + 
   xlab("")
-p
+```
+
+
+
+```{r}
+df$discount<-df$BASE_PRICE-df$PRICE
+df$VisitPerH<-df$VISITS/df$HHS
+df$VisitSize<-df$UNITS/df$VISITS
+```
+
+Converting to factor and releveling
+```{r}
+df$UPC<-as.factor(df$UPC)
+df$FEATURE<-as.factor(df$FEATURE)
+df$TPR_ONLY<-as.factor(df$TPR_ONLY)
+df$DISPLAY<-as.factor(df$DISPLAY)
+df$MANUFACTURER<-as.factor(df$MANUFACTURER)
+df$CATEGORY<-as.factor(df$CATEGORY)
+df$STATE<-as.factor(df$STATE)
+df$SEGMENT<-as.factor(df$SEGMENT)
+df$month<-as.factor(df$month)
+df$year<-as.factor(df$year)
+df$week<-as.factor(df$week)
+```
+
+
+```{r}
+df$SPEND<-as.numeric(df$SPEND)
+subset(df, SPEND<0.1)
+df<-subset(df, SPEND>0.1)
+reg<-lm(formula = log(SPEND)~FEATURE+TPR_ONLY+DISPLAY+year+month+week+SEGMENT+STATE+MANUFACTURER+CATEGORY+discount+CATEGORY*FEATURE+CATEGORY*DISPLAY+CATEGORY*TPR_ONLY,data=df)
+summary(reg)
+
 ```
 
 ```{r}
-
+plot(reg)
 ```
 
 ```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
+plot(df$SPEND,df$discount)
 ```
 
 ```{r}
