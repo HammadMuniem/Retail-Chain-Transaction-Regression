@@ -2,35 +2,70 @@
 title: "Retail Chain Transaction"
 output: rmarkdown::github_document
 ---
-
+# Retail Store Transaction Data
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Updating Libraries
+```{r echo=T, results='hide',message=FALSE,warning=FALSE}
+library(rio)
+library(formattable)
+library(dplyr)
+library(tidyverse)
+library(readxl)
+library(corrplot)
+library(stargazer)
+library(car)
+library(PerformanceAnalytics)
+library(tidyr)
+library(tm)
+library(MASS)
+library(AER)
+library(ggplot2)
+library(lubridate)
+library(lattice)
+library(lme4)
+library(MuMIn)
+library("ggridges")
+library("hrbrthemes")
+library(ggthemes)
+library("maps")
+library("mapproj")
+library(cowplot)
+library(ROCR)
 
-```{r}
-
+options(scipen = 999)
 ```
 
 
 ```{r}
-
+stores<-read_xlsx("RetailChain.xlsx",sheet = "stores")
+products<-read_xlsx("RetailChain.xlsx",sheet = "products")
+transactions<-read_xlsx("RetailChain.xlsx",sheet = "transactions")
 ```
 
 ```{r}
-
+df<-merge(transactions, products, by = 'UPC')
 ```
 
 ```{r}
-
+df<-subset(df, CATEGORY!='ORAL HYGIENE PRODUCTS')
 ```
 
 ```{r}
-
+str(df$WEEK_END_DATE)
 ```
 
 ```{r}
+df2<-aggregate(df$UNITS, by=list(Category=df$WEEK_END_DATE), FUN=sum)
+```
 
+```{r}
+p <- ggplot(df2, aes(x=Category, y=x)) +
+  geom_line(color="RED3") + 
+  xlab("")
+p
 ```
 
 ```{r}
