@@ -173,6 +173,69 @@ ggplot(df2, aes(x=Category, y=x)) +
   xlab("")
 ```
 ```{r}
+ggplot(df, aes(x=df$UNITS)) + geom_density(color="seagreen",fill="seagreen")+ggtitle("Histogram of UNITS")+xlab("UNITS")
+
+ggplot(df, aes(x=log(df$SPEND))) + geom_density(color="seagreen",fill="seagreen")+ggtitle("Histogram of Log UNITS")+xlab("Log of UNITS")
+
+df %>%
+  group_by(week) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(week),y=log(UNITS),fill="coral"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+df %>%
+  group_by(month) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(month),y=log(UNITS),fill="seagreen"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+df %>%
+  group_by(year) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(year),y=log(UNITS),fill="seagreen"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+df %>%
+  group_by(STATE) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(STATE),y=log(UNITS),fill="seagreen"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+df %>%
+  group_by(SEGMENT) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(SEGMENT),y=log(UNITS),fill="seagreen"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+df %>%
+  group_by(MANUFACTURER) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(MANUFACTURER),y=log(UNITS),fill="seagreen"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+
+df %>%
+  group_by(FEATURE) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(FEATURE),y=log(UNITS),fill="seagreen"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+df %>%
+  group_by(DISPLAY) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(DISPLAY),y=log(UNITS),fill="seagreen"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+df %>%
+  group_by(TPR_ONLY) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(TPR_ONLY),y=log(UNITS),fill="seagreen"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+
+```
+
+```{r}
 df2<-aggregate(df$HHS, by=list(Category=df$WEEK_END_DATE), FUN=sum)
 ```
 
@@ -182,7 +245,75 @@ ggplot(df2, aes(x=Category, y=x)) +
   xlab("")
 ```
 ```{r}
-df2<-aggregate(df$PRICE, by=list(Category=df$WEEK_END_DATE), FUN=sum)
+ggplot(df, aes(x=df$HHS)) + geom_density(color="purple",fill="purple")+ggtitle("Histogram of HHS")+xlab("HHS")
+
+ggplot(df, aes(x=log(df$HHS))) + geom_density(color="purple",fill="purple")+ggtitle("Histogram of Log HHS")+xlab("Log of HHS")
+
+df %>%
+  group_by(week) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(week),y=log(HHS),fill="coral"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+df %>%
+  group_by(month) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(month),y=log(HHS),fill="seagreen"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+df %>%
+  group_by(year) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(year),y=log(HHS),fill="seagreen"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+df %>%
+  group_by(STATE) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(STATE),y=log(HHS),fill="seagreen"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+df %>%
+  group_by(SEGMENT) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(SEGMENT),y=log(HHS),fill="seagreen"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+df %>%
+  group_by(MANUFACTURER) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(MANUFACTURER),y=log(HHS),fill="seagreen"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+
+df %>%
+  group_by(FEATURE) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(FEATURE),y=log(HHS),fill="seagreen"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+df %>%
+  group_by(DISPLAY) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(DISPLAY),y=log(HHS),fill="seagreen"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+df %>%
+  group_by(TPR_ONLY) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(TPR_ONLY),y=log(HHS),fill="seagreen"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+df %>%
+  group_by(CATEGORY) %>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(CATEGORY),y=log(HHS),fill="seagreen"))+ylim(0,8)+
+  guides(fill=FALSE)
+
+```
+
+```{r}
+df2<-aggregate(df$SPEND, by=list(Category=df$WEEK_END_DATE), FUN=sum)
 ```
 
 ```{r}
@@ -197,11 +328,15 @@ ggplot(df2, aes(x=Category, y=x)) +
 df$discount<-df$BASE_PRICE-df$PRICE
 df$VisitPerH<-df$VISITS/df$HHS
 df$VisitSize<-df$UNITS/df$VISITS
+df$Product <- paste(df$DESCRIPTION, df$PRODUCT_SIZE, sep="_")
 ```
 
 Converting to factor and releveling
 ```{r}
 df$UPC<-as.factor(df$UPC)
+df$Product<-as.factor(df$Product)
+df$STORE_NAME<-as.factor(df$STORE_NAME)
+df$DESCRIPTION<-as.factor((df$DESCRIPTION))
 df$FEATURE<-as.factor(df$FEATURE)
 df$TPR_ONLY<-as.factor(df$TPR_ONLY)
 df$DISPLAY<-as.factor(df$DISPLAY)
@@ -212,6 +347,7 @@ df$SEGMENT<-as.factor(df$SEGMENT)
 df$month<-as.factor(df$month)
 df$year<-as.factor(df$year)
 df$week<-as.factor(df$week)
+df$campaign<-relevel(df$CATEGORY,"COLD CEREAL")
 ```
 
 
@@ -219,13 +355,17 @@ df$week<-as.factor(df$week)
 df$SPEND<-as.numeric(df$SPEND)
 subset(df, SPEND<0.1)
 df<-subset(df, SPEND>0.1)
-reg<-lm(formula = log(SPEND)~FEATURE+TPR_ONLY+DISPLAY+year+month+week+SEGMENT+STATE+MANUFACTURER+CATEGORY+discount+CATEGORY*FEATURE+CATEGORY*DISPLAY+CATEGORY*TPR_ONLY,data=df)
-summary(reg)
-
 ```
 
 ```{r}
-plot(reg)
+reg<-lmer(formula = log(SPEND)~FEATURE+TPR_ONLY+DISPLAY+year+month+week+SEGMENT+STATE+(1|Product)+CATEGORY+discount+CATEGORY*FEATURE+CATEGORY*DISPLAY+CATEGORY*TPR_ONLY+SEGMENT*FEATURE+SEGMENT*DISPLAY+SEGMENT*TPR_ONLY+(1|STORE_NAME)+PRICE,data=df)
+```
+
+```{r}
+AIC(reg)
+vif(reg)
+summary(reg)
+ranef(reg)
 ```
 
 ```{r}
@@ -233,75 +373,127 @@ plot(df$SPEND,df$discount)
 ```
 
 ```{r}
+reg2<-lmer(formula = log(HHS)~FEATURE+TPR_ONLY+DISPLAY+year+month+week+SEGMENT+STATE+(1|Product)+CATEGORY+discount+CATEGORY*FEATURE+CATEGORY*DISPLAY+CATEGORY*TPR_ONLY+(1|STORE_NAME)+SEGMENT*FEATURE+SEGMENT*DISPLAY+SEGMENT*TPR_ONLY+PRICE,data=df)
+```
+
+```{r}
+AIC(reg2)
+vif(reg2)
+summary(reg2)
+ranef(reg2)
+```
+
+```{r}
+reg3<-lmer(formula = log(UNITS)~FEATURE+TPR_ONLY+DISPLAY+year+month+week+SEGMENT+STATE+(1|Product)+CATEGORY+discount+CATEGORY*FEATURE+CATEGORY*DISPLAY+CATEGORY*TPR_ONLY+(1|STORE_NAME)+SEGMENT*FEATURE+SEGMENT*DISPLAY+SEGMENT*TPR_ONLY+HHS+PRICE,data=df)
+```
+
+```{r}
+AIC(reg3)
+vif(reg3)
+summary(reg3)
+ranef(reg3)
+```
+
+
+
+```{r}
+#product_summary <- df %>% 
+ # group_by(year, Product) %>%
+  #summarise(UNITS = mean(UNITS), 
+   #         SPEND = sum(SPEND), 
+    #        PRICE = mean(PRICE), 
+     #       BASE_PRICE = mean(BASE_PRICE)) %>%
+#  arrange(year,Product)
+
+#glimpse(product_summary)
+```
+
+```{r}
+#checking for normality
+qqnorm(reg4$residuals,pch=20,main="Checking for Normality Plot")
+qqline(reg4$residuals,lwd=3,col="red3")
+```
+
+```{r}
+stargazer(reg,reg2,reg3,type="text",title='Results',align = TRUE,single.row=TRUE,digits=2,out = "reg3.txt")
 
 ```
 
 ```{r}
+library('DHARMa')
 
 ```
 
 ```{r}
-
+simulationOutput <- simulateResiduals(fittedModel = reg, plot = F)
+plot(simulationOutput)
 ```
 
 ```{r}
-
+bartlett.test(list(residuals(reg), fitted(reg)))
 ```
 
 ```{r}
+qqmath(reg)
 
+Plot.reg <- plot(reg) #creates a fitted vs residual plot
+Plot.reg
+```
+
+
+```{r}
+reg4<-lm(formula= UNITS~PRICE*Product,data=df)
+
+AIC(reg4)
+
+summary(reg4)
 ```
 
 ```{r}
+product_summary2 <- df %>% 
+  group_by(Product) %>%
+  summarise(UNITS = mean(UNITS), 
+            SPEND = sum(SPEND), 
+            PRICE = mean(PRICE), 
+            BASE_PRICE = mean(BASE_PRICE)) %>%
+  arrange(Product)
 
+glimpse(product_summary2)
 ```
 
 ```{r}
-
+coef<-coefficients(reg4)
+coef<-as.data.frame(coef)
+coef <- cbind(Var = rownames(coef), coef)
 ```
 
 ```{r}
+coef$Var2<-as.character(coef$Var)
 
+coef$Product<-substr(coef$Var2,14,nchar(coef$Var2))
+
+coef$Var<-NULL
+coef$Var2<-NULL
 ```
 
 ```{r}
-
+c2<-merge(product_summary2, coef, by = 'Product')
 ```
 
 ```{r}
-
+c2$PriceOverQuantity<-c2$PRICE/c2$UNITS
+c2$PriceElasticity<-round(c2$coef*c2$PriceOverQuantity,3)
+c3<-c2[order(-c2$PriceElasticity),]
 ```
 
 ```{r}
-
+library(openxlsx)
+write.xlsx(c3, 'priceelasticity.xlsx')
+write.xlsx(df, 'joined.xlsx')
 ```
 
 ```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
+c3$AverageProfit<-c3$PRICE-c3$BASE_PRICE
 ```
 
 ```{r}
