@@ -408,11 +408,6 @@ ranef(reg3)
 #glimpse(product_summary)
 ```
 
-```{r}
-#checking for normality
-qqnorm(reg4$residuals,pch=20,main="Checking for Normality Plot")
-qqline(reg4$residuals,lwd=3,col="red3")
-```
 
 ```{r}
 stargazer(reg,reg2,reg3,type="text",title='Results',align = TRUE,single.row=TRUE,digits=2,out = "reg3.txt")
